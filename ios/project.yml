@@ -1,0 +1,83 @@
+name: Atlas
+options:
+  bundleIdPrefix: com.atlas
+  deploymentTarget:
+    iOS: "16.0"
+  xcodeVersion: "15.0"
+  createIntermediateGroups: true
+
+settings:
+  base:
+    SWIFT_VERSION: "5.9"
+    DEVELOPMENT_TEAM: ""        # Fill in your Apple Developer Team ID
+    DEBUG_INFORMATION_FORMAT: dwarf-with-dsym
+    IPHONEOS_DEPLOYMENT_TARGET: "16.0"
+    TARGETED_DEVICE_FAMILY: "1"
+
+targets:
+
+  # ─── Main App ──────────────────────────────────────────────────────────────
+  Atlas:
+    type: application
+    platform: iOS
+    sources:
+      - path: Atlas
+      - path: Shared
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.atlas.app
+        INFOPLIST_FILE: Atlas/Info.plist
+        ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
+    entitlements:
+      path: Atlas/Atlas.entitlements
+      properties:
+        com.apple.security.application-groups:
+          - group.com.atlas.app
+        com.apple.developer.associated-domains: []
+    dependencies:
+      - sdk: EventKit.framework
+      - sdk: UserNotifications.framework
+      - sdk: BackgroundTasks.framework
+
+  # ─── Share Extension ───────────────────────────────────────────────────────
+  AtlasShareExtension:
+    type: app-extension
+    platform: iOS
+    sources:
+      - path: AtlasShareExtension
+      - path: Shared
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.atlas.app.share
+        INFOPLIST_FILE: AtlasShareExtension/Info.plist
+    entitlements:
+      path: AtlasShareExtension/AtlasShareExtension.entitlements
+      properties:
+        com.apple.security.application-groups:
+          - group.com.atlas.app
+    dependencies:
+      - target: Atlas
+        embed: false
+      - sdk: EventKit.framework
+
+  # ─── iMessage App Extension ────────────────────────────────────────────────
+  AtlasMessageExtension:
+    type: app-extension
+    platform: iOS
+    sources:
+      - path: AtlasMessageExtension
+      - path: Shared
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.atlas.app.imessage
+        INFOPLIST_FILE: AtlasMessageExtension/Info.plist
+    entitlements:
+      path: AtlasMessageExtension/AtlasMessageExtension.entitlements
+      properties:
+        com.apple.security.application-groups:
+          - group.com.atlas.app
+    dependencies:
+      - target: Atlas
+        embed: false
+      - sdk: Messages.framework
+      - sdk: EventKit.framework
